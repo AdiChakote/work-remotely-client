@@ -134,12 +134,21 @@ export default function Dashboard() {
       {/* Main content */}
       <main className="flex-1 p-6">
         {selectedWorkspace ? (
-          <WorkspaceDetails
-            workspace={selectedWorkspace}
-            userId={userId}
-            handleDelete={handleDelete}
-            handleLeave={handleLeave}
-          />
+          <>
+            <WorkspaceDetails
+              workspace={selectedWorkspace}
+              userId={userId}
+              handleDelete={handleDelete}
+              handleLeave={handleLeave}
+            />
+            <div className="mt-6 h-64 border rounded p-2">
+              <Chat
+                workspaceId={selectedWorkspace._id}
+                token={token}
+                userId={userId}
+              />
+            </div>
+          </>
         ) : (
           <h1 className="text-xl">Select a workspace</h1>
         )}
