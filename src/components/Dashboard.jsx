@@ -3,10 +3,11 @@ import axios from "axios";
 import WorkspaceForm from "./WorkspaceForm";
 import Chat from "./Chat";
 import TaskBoard from "./TaskBoard";
+import DocumentEditor from "./DocumentEditor";
 
 function WorkspaceDetails({ workspace, userId, handleDelete, handleLeave }) {
   return (
-    <div>
+    <div className="mb-4">
       <h1 className="text-2xl font-bold">{workspace.name}</h1>
 
       <h2 className="mt-2 font-semibold">Members:</h2>
@@ -39,6 +40,7 @@ function WorkspaceDetails({ workspace, userId, handleDelete, handleLeave }) {
 export default function Dashboard() {
   const [workspaces, setWorkspaces] = useState([]);
   const [selectedWorkspace, setSelectedWorkspace] = useState(null);
+  const [activeTab, setActiveTab] = useState("chat"); // Chat | Tasks | Docs
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
 
@@ -94,8 +96,35 @@ export default function Dashboard() {
     }
   };
 
+  const renderActiveTab = () => {
+    if (!selectedWorkspace) return null;
+    switch (activeTab) {
+      case "chat":
+        return (
+          <Chat
+            workspaceId={selectedWorkspace._id}
+            token={token}
+            userId={userId}
+          />
+        );
+      case "tasks":
+        return (
+          <TaskBoard
+            workspaceId={selectedWorkspace._id}
+            token={token}
+            userId={userId}
+          />
+        );
+      case "docs":
+        return <DocumentEditor workspaceId={selectedWorkspace._id} />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="flex h-screen">
+      {/* Sidebar */}
       <aside className="w-64 bg-gray-100 p-4 flex flex-col gap-4">
         <h2 className="font-bold text-lg">Workspaces</h2>
 
@@ -107,26 +136,20 @@ export default function Dashboard() {
                 ? "bg-blue-400 text-white"
                 : "bg-white"
             }`}
-            onClick={() => setSelectedWorkspace(ws)}
+            onClick={() => {
+              setSelectedWorkspace(ws);
+              setActiveTab("chat");
+            }}
           >
             {ws.name}
           </button>
         ))}
 
         <WorkspaceForm token={token} setWorkspaces={setWorkspaces} />
-
-        <button disabled className="mt-4 p-2 bg-gray-300 rounded">
-          Chat
-        </button>
-        <button disabled className="mt-2 p-2 bg-gray-300 rounded">
-          Task Board
-        </button>
-        <button disabled className="mt-2 p-2 bg-gray-300 rounded">
-          Documents
-        </button>
       </aside>
 
-      <main className="flex-1 p-6 space-y-6">
+      {/* Main Content */}
+      <main className="flex-1 p-6 flex flex-col gap-4 overflow-y-auto">
         {selectedWorkspace ? (
           <>
             <WorkspaceDetails
@@ -136,20 +159,43 @@ export default function Dashboard() {
               handleLeave={handleLeave}
             />
 
-            <div className="h-64 border rounded p-2">
-              <Chat
-                workspaceId={selectedWorkspace._id}
-                token={token}
-                userId={userId}
-              />
+            {/* Tabs */}
+            <div className="flex gap-2 mb-2">
+              <button
+                className={`px-4 py-2 rounded-t ${
+                  activeTab === "chat"
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200"
+                }`}
+                onClick={() => setActiveTab("chat")}
+              >
+                Chat
+              </button>
+              <button
+                className={`px-4 py-2 rounded-t ${
+                  activeTab === "tasks"
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200"
+                }`}
+                onClick={() => setActiveTab("tasks")}
+              >
+                Task Board
+              </button>
+              <button
+                className={`px-4 py-2 rounded-t ${
+                  activeTab === "docs"
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200"
+                }`}
+                onClick={() => setActiveTab("docs")}
+              >
+                Documents
+              </button>
             </div>
 
-            <div className="h-96 border rounded p-2">
-              <TaskBoard
-                workspaceId={selectedWorkspace._id}
-                token={token}
-                userId={userId}
-              />
+            {/* Tab Content */}
+            <div className="flex-1 border rounded p-2 min-h-[400px]">
+              {renderActiveTab()}
             </div>
           </>
         ) : (
