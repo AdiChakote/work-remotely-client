@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import WorkspaceForm from "./WorkspaceForm";
+import Chat from "./Chat";
+import TaskBoard from "./TaskBoard";
 
-// Component to show workspace details and actions
 function WorkspaceDetails({ workspace, userId, handleDelete, handleLeave }) {
   return (
     <div>
@@ -46,9 +47,7 @@ export default function Dashboard() {
       try {
         const res = await axios.get(
           `${import.meta.env.VITE_API_URL}/workspaces`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
         setWorkspaces(res.data);
       } catch (err) {
@@ -97,11 +96,9 @@ export default function Dashboard() {
 
   return (
     <div className="flex h-screen">
-      {/* Sidebar */}
       <aside className="w-64 bg-gray-100 p-4 flex flex-col gap-4">
         <h2 className="font-bold text-lg">Workspaces</h2>
 
-        {/* Workspace list */}
         {workspaces.map((ws) => (
           <button
             key={ws._id}
@@ -116,10 +113,8 @@ export default function Dashboard() {
           </button>
         ))}
 
-        {/* Workspace creation */}
         <WorkspaceForm token={token} setWorkspaces={setWorkspaces} />
 
-        {/* Placeholders for future modules */}
         <button disabled className="mt-4 p-2 bg-gray-300 rounded">
           Chat
         </button>
@@ -131,8 +126,7 @@ export default function Dashboard() {
         </button>
       </aside>
 
-      {/* Main content */}
-      <main className="flex-1 p-6">
+      <main className="flex-1 p-6 space-y-6">
         {selectedWorkspace ? (
           <>
             <WorkspaceDetails
@@ -141,8 +135,17 @@ export default function Dashboard() {
               handleDelete={handleDelete}
               handleLeave={handleLeave}
             />
-            <div className="mt-6 h-64 border rounded p-2">
+
+            <div className="h-64 border rounded p-2">
               <Chat
+                workspaceId={selectedWorkspace._id}
+                token={token}
+                userId={userId}
+              />
+            </div>
+
+            <div className="h-96 border rounded p-2">
+              <TaskBoard
                 workspaceId={selectedWorkspace._id}
                 token={token}
                 userId={userId}
