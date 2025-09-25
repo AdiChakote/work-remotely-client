@@ -197,6 +197,10 @@ export default function Dashboard() {
             <div className="flex-1 border rounded p-2 min-h-[400px]">
               {renderActiveTab()}
             </div>
+
+            <div className="h-[400px] border rounded p-2">
+              <VideoCall workspaceId={selectedWorkspace._id} userId={userId} />
+            </div>
           </>
         ) : (
           <h1 className="text-xl">Select a workspace</h1>
