@@ -4,6 +4,7 @@ import WorkspaceForm from "./WorkspaceForm";
 import Chat from "./Chat";
 import TaskBoard from "./TaskBoard";
 import DocumentEditor from "./DocumentEditor";
+import Whiteboard from "./Whiteboard";
 
 function WorkspaceDetails({ workspace, userId, handleDelete, handleLeave }) {
   return (
@@ -117,6 +118,10 @@ export default function Dashboard() {
         );
       case "docs":
         return <DocumentEditor workspaceId={selectedWorkspace._id} />;
+      case "whiteboard":
+        return (
+          <Whiteboard workspaceId={selectedWorkspace._id} userId={userId} />
+        );
       default:
         return null;
     }
@@ -190,6 +195,16 @@ export default function Dashboard() {
                 onClick={() => setActiveTab("docs")}
               >
                 Documents
+              </button>
+              <button
+                className={`px-4 py-2 rounded-t ${
+                  activeTab === "whiteboard"
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200"
+                }`}
+                onClick={() => setActiveTab("whiteboard")}
+              >
+                Whiteboard
               </button>
             </div>
 

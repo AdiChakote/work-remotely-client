@@ -3,7 +3,9 @@ import axios from "axios";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { io } from "socket.io-client";
 
-const socket = io(import.meta.env.VITE_API_URL);
+const socket = io(import.meta.env.VITE_SOCKET_URL, {
+  transports: ["websocket", "polling"],
+});
 
 export default function TaskBoard({ workspaceId, token }) {
   const [lists, setLists] = useState([]);
