@@ -5,6 +5,8 @@ import Chat from "./Chat";
 import TaskBoard from "./TaskBoard";
 import DocumentEditor from "./DocumentEditor";
 import Whiteboard from "./Whiteboard";
+import VideoCall from "./VideoCall";
+import WorkspaceFileUpload from "./WorkspaceFileUpload";
 
 function WorkspaceDetails({ workspace, userId, handleDelete, handleLeave }) {
   return (
@@ -122,6 +124,22 @@ export default function Dashboard() {
         return (
           <Whiteboard workspaceId={selectedWorkspace._id} userId={userId} />
         );
+      case "video":
+        return (
+          <VideoCall workspaceId={selectedWorkspace._id} userId={userId} />
+        );
+      case "files":
+        return (
+          <WorkspaceFileUpload
+            workspaceId={selectedWorkspace._id}
+            token={token}
+            onUpload={(file) => {
+              console.log("Uploaded file:", file);
+              // Optionally, update workspace state to show files
+            }}
+          />
+        );
+
       default:
         return null;
     }
@@ -206,15 +224,31 @@ export default function Dashboard() {
               >
                 Whiteboard
               </button>
+              <button
+                className={`px-4 py-2 rounded-t ${
+                  activeTab === "video"
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200"
+                }`}
+                onClick={() => setActiveTab("video")}
+              >
+                Video Call
+              </button>
+              <button
+                className={`px-4 py-2 rounded-t ${
+                  activeTab === "files"
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200"
+                }`}
+                onClick={() => setActiveTab("files")}
+              >
+                Files
+              </button>
             </div>
 
             {/* Tab Content */}
             <div className="flex-1 border rounded p-2 min-h-[400px]">
               {renderActiveTab()}
-            </div>
-
-            <div className="h-[400px] border rounded p-2">
-              <VideoCall workspaceId={selectedWorkspace._id} userId={userId} />
             </div>
           </>
         ) : (
